@@ -302,10 +302,7 @@ namespace EF.Core.Expansion.Dynamic
             /*属性表达式*/
             var memberExpression = GetMemberExpression(name, out var propertyInfo);
 
-            if (!ConvertType(propertyInfo.PropertyType, value, out var result))
-                throw new Exception($"值:{value}无法转换成{propertyInfo.PropertyType.Name}类型");
-            /*值表达式*/
-            Expression constantExpression = Expression.Constant(result);
+            Expression constantExpression = getValueExpression(name, value, propertyInfo);
 
             switch (compare.ToLower())
             {
@@ -332,6 +329,32 @@ namespace EF.Core.Expansion.Dynamic
             }
 
             throw new Exception($"未匹配的操作符:{compare}");
+        }
+
+        private static Expression getValueExpression(string name, string value, PropertyInfo propertyInfo)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentException("message", nameof(name));
+            }
+
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                throw new ArgumentException("message", nameof(value));
+            }
+
+            /*优化匹配属性对比*/
+            var propertyDic = GetPropertyDic(typeof(T));
+            if (propertyDic.TryGetValue(value.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries)[0], out var propertyInfo2))
+            {
+                return GetMemberExpression(value, out propertyInfo2);
+            }
+
+            if (!ConvertType(propertyInfo.PropertyType, value, out var result))
+                throw new Exception($"值:{value}无法转换成{propertyInfo.PropertyType.Name}类型");
+            /*值表达式*/
+            Expression constantExpression = Expression.Constant(result);
+            return constantExpression;
         }
 
 

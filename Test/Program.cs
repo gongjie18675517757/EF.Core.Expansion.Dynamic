@@ -17,9 +17,11 @@ namespace Test
         public string Name { get; set; }
 
         public int Age { get; set; }
+
+        public int Age2 { get; set; }
     }
 
-    class Db : DbContext
+    class Db2 : DbContext
     {
         public DbSet<Entity> Entity { get; set; }
     }
@@ -41,6 +43,12 @@ namespace Test
                     {
                         MultipleMark = MultipleMark.And,
                         CompareConditions = new[] {
+                              new CompareCondition()
+                        {
+                            Compare="==",
+                            Name="age",
+                            Value="age2",
+                        },
                         new CompareCondition()
                         {
                             Compare="==",
@@ -162,7 +170,7 @@ namespace Test
             }
             };
 
-            var iq = new Db().Entity.DynamicQuery(pageQueryParameter.Condition);
+            var iq = new Db2().Entity.DynamicQuery(pageQueryParameter.Condition);
 
             Console.WriteLine(iq.ToString());
 
