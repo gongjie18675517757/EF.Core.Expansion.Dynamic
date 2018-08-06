@@ -49,6 +49,67 @@ namespace EF.Core.Expansion.Dynamic
             return Expression.Lambda<Func<T, bool>>(Expression.Or(left.Body, invocationExpression), left.Parameters);
         }
 
+        /// <summary>
+        /// 动态排序
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="queryable"></param>
+        /// <param name="sortings"></param>
+        /// <returns></returns>
+        public static IQueryable<T> DynamicSort(IQueryable<T> queryable, IEnumerable<SortingParameter> sortings)
+        {
+            var index = 0;
+            foreach (var item in sortings)
+            {
+                index++;
+                var memberExpression = GetMemberExpression(item.Name, out var propertyInfo);
+
+                var methodInfo = typeof(ExpressionExpand<T>)
+                                 .GetMethod("GenerateDynamicSort", BindingFlags.Instance |
+                                                          BindingFlags.Static |
+                                                         //BindingFlags.Public |
+                                                         BindingFlags.NonPublic |
+                                                         BindingFlags.DeclaredOnly)
+                                 .MakeGenericMethod(GetNullableType(propertyInfo.PropertyType));
+                queryable = (IQueryable<T>)methodInfo.Invoke(null, new object[] { queryable, item, index });
+            }
+
+            return queryable;
+        }
+
+        /// <summary>
+        /// 拼排序表达式
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <param name="queryable"></param>
+        /// <param name="sorting"></param>
+        /// <returns></returns>
+        private static IQueryable<T> GenerateDynamicSort<TKey>(IQueryable<T> queryable, SortingParameter sorting, int sort)
+        {
+            var memberExpression = GetMemberExpression(sorting.Name, out var propertyInfo);
+            var expression = Expression.Lambda<Func<T, TKey>>(memberExpression, ParameterExpression);
+            switch (sorting.SortMark)
+            {
+                case SortMark.Dsc:
+                    if (sort > 1 && queryable is IOrderedQueryable<T> orderQueryable)
+                        queryable = orderQueryable.ThenBy(expression);
+                    else
+                        queryable = queryable.OrderBy(expression);
+                    break;
+                case SortMark.Desc:
+                    if (sort > 1 && queryable is IOrderedQueryable<T> orderQueryable2)
+                        queryable = orderQueryable2.ThenByDescending(expression);
+                    else
+                        queryable = queryable.OrderByDescending(expression);
+                    break;
+                default:
+                    break;
+            }
+
+            return queryable;
+        }
+
+
 
         /// <summary>
         /// 组装条件
@@ -56,7 +117,7 @@ namespace EF.Core.Expansion.Dynamic
         /// <param name="queryable"></param>
         /// <param name="query"></param>
         /// <returns></returns>
-        public static IQueryable<T> AssemblyCondition(IQueryable<T> queryable, Query query)
+        public static IQueryable<T> DynamicQuery(IQueryable<T> queryable, QueryCondition query)
         {
             if (queryable == null)
                 throw new ArgumentNullException(nameof(queryable));
@@ -170,7 +231,9 @@ namespace EF.Core.Expansion.Dynamic
             /*拼子条件*/
             if (filter.Filters != null && filter.Filters.Any())
             {
-
+                var expressions2 = filter.Filters.Select(x => GenerateFilterExpression(x));
+                var expressions3 = new[] { expression }.Union(expressions2);
+                expression = MergeExpression(filter.MultipleMark, expressions3);
             }
 
             return expression;
@@ -332,6 +395,7 @@ namespace EF.Core.Expansion.Dynamic
             }
             throw new Exception($"未匹配的操作符:{compare}");
         }
+
 
 
     }

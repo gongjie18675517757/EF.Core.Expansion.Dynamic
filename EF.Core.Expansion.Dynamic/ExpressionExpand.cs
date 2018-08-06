@@ -103,7 +103,12 @@ namespace EF.Core.Expansion.Dynamic
             return constantExpression;
         }
 
-       
+       /// <summary>
+       /// 反射转换类型
+       /// </summary>
+       /// <param name="values"></param>
+       /// <param name="propertyInfo"></param>
+       /// <returns></returns>
         public static ConstantExpression ToArrayExpression(string[] values, PropertyInfo propertyInfo)
         {
             lock (keyValuePairs)
@@ -175,5 +180,7 @@ namespace EF.Core.Expansion.Dynamic
             }
             return false;
         }
+
+
     }
 }
