@@ -312,10 +312,28 @@ namespace EF.Core.Expansion.Dynamic
                     return Expression.NotEqual(memberExpression, constantExpression);
                 case "contains":
                     return Expression.And(Expression.NotEqual(memberExpression, Expression.Constant(null)),
-                        Expression.Call(memberExpression, typeof(string).GetMethod("Contains"), constantExpression));
+                        Expression.Call(memberExpression, typeof(string).GetMethod("Contains"), constantExpression)); 
                 case "!contains":
                     return Expression.Or(Expression.Equal(memberExpression, Expression.Constant(null)),
                         Expression.Not(Expression.Call(memberExpression, typeof(string).GetMethod("Contains"), constantExpression)));
+                case "startswith":
+                    return Expression.And(Expression.NotEqual(memberExpression, Expression.Constant(null)),
+                        Expression.Call(memberExpression, typeof(string).GetMethod("StartsWith"), constantExpression));
+                case "!startswith":
+                    return Expression.Or(Expression.Equal(memberExpression, Expression.Constant(null)),
+                        Expression.Not(Expression.Call(memberExpression, typeof(string).GetMethod("StartsWith"), constantExpression)));
+                case "endswith":
+                    return Expression.And(Expression.NotEqual(memberExpression, Expression.Constant(null)),
+                        Expression.Call(memberExpression, typeof(string).GetMethod("EndsWith"), constantExpression));
+                case "!endswith":
+                    return Expression.Or(Expression.Equal(memberExpression, Expression.Constant(null)),
+                        Expression.Not(Expression.Call(memberExpression, typeof(string).GetMethod("EndsWith"), constantExpression)));
+                case "indexof":
+                    return Expression.And(Expression.NotEqual(memberExpression, Expression.Constant(null)),
+                        Expression.Call(memberExpression, typeof(string).GetMethod("IndexOf"), constantExpression));
+                case "length":
+                    return Expression.And(Expression.NotEqual(memberExpression, Expression.Constant(null)),
+                        Expression.Call(memberExpression, typeof(string).GetMethod("Length"), constantExpression));
                 case ">":
                     return Expression.GreaterThan(memberExpression, constantExpression);
                 case ">=":

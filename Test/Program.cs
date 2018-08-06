@@ -30,6 +30,9 @@ namespace Test
     {
         static void Main(string[] args)
         {
+
+            var xx = new Db2().Entity.Where(x => x.Name.Length > 10).ToString();
+
             PageQueryParameter pageQueryParameter = new PageQueryParameter()
             {
                 Condition = new QueryCondition()
@@ -48,6 +51,12 @@ namespace Test
                             Compare="==",
                             Name="age",
                             Value="age2",
+                        },
+                              new CompareCondition()
+                        {
+                            Compare="length",
+                            Name="name",
+                            Value="20",
                         },
                         new CompareCondition()
                         {
@@ -171,6 +180,7 @@ namespace Test
             };
 
             var iq = new Db2().Entity.DynamicQuery(pageQueryParameter.Condition);
+             
 
             Console.WriteLine(iq.ToString());
 
