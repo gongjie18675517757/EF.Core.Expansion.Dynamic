@@ -52,12 +52,12 @@ namespace Test
                             Name="age",
                             Value="age2",
                         },
-                              new CompareCondition()
-                        {
-                            Compare="length",
-                            Name="name",
-                            Value="20",
-                        },
+                        //      new CompareCondition()
+                        //{
+                        //    Compare="length",
+                        //    Name="name",
+                        //    Value="20",
+                        //},
                         new CompareCondition()
                         {
                             Compare="==",

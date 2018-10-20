@@ -2,6 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>gongjie@qq.com</Authors>
+    <Company>无</Company>
+    <Product>无</Product>
+    <PackageLicenseUrl>https://github.com/gongjie18675517757/EF.Core.Expansion.Dynamic</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/gongjie18675517757/EF.Core.Expansion.Dynamic</PackageProjectUrl>
+    <PackageIconUrl>https://github.com/gongjie18675517757/EF.Core.Expansion.Dynamic</PackageIconUrl>
+    <RepositoryUrl>https://github.com/gongjie18675517757/EF.Core.Expansion.Dynamic</RepositoryUrl>
   </PropertyGroup>
 
 </Project>
