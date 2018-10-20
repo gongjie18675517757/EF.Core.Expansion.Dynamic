@@ -3,7 +3,7 @@
 
 支持操作符:[>,<,>=,<=,contains,!contains,in,!in,startswith,!startswith,endswith,!endswith,]
 
-如:
+## 示例代码:
 ```
     class Entity
     {
@@ -192,3 +192,139 @@
 
 ```
 
+## 参数json
+```
+{
+"Total": 0,
+"Condition": {
+"Keyword": {
+    "MultipleMark": 1,
+    "Keywords": [
+    "a",
+    "b"
+    ]
+},
+"Filter": {
+    "MultipleMark": 0,
+    "Filters": [
+        {
+        "MultipleMark": 1,
+        "Filters": null,
+        "CompareConditions": null,
+        "MuchConditions": [
+            {
+                "Name": "age",
+                "Compare": "in",
+                "Values": [
+                "1",
+                "4"
+                ]
+            },
+            {
+                "Name": "age",
+                "Compare": "in",
+                "Values": [
+                    "1",
+                    "4",
+                    "9999"
+                ]
+            }
+        ]
+        },
+        {
+            "MultipleMark": 1,
+            "Filters": null,
+            "CompareConditions": null,
+            "MuchConditions": [
+                {
+                    "Name": "age",
+                    "Compare": "in",
+                    "Values": [
+                        "1",
+                        "4"
+                    ]
+                }
+            ]
+        }
+    ],
+    "CompareConditions": [
+    {
+    "Name": "name",
+    "Value": "nam2",
+    "Compare": "=="
+    },
+    {
+    "Name": "name",
+    "Value": "nam2",
+    "Compare": "!="
+    },
+    {
+    "Name": "name",
+    "Value": "nam2",
+    "Compare": "contains"
+    },
+    {
+    "Name": "name",
+    "Value": "nam2",
+    "Compare": "!contains"
+    }
+    ],
+    "MuchConditions": [
+    {
+    "Name": "name",
+    "Compare": "in",
+    "Values": [
+    "1",
+    "2",
+    "3"
+    ]
+    },
+    {
+    "Name": "name",
+    "Compare": "!in",
+    "Values": [
+    "1",
+    "2",
+    "3"
+    ]
+    },
+    {
+    "Name": "age",
+    "Compare": "in",
+    "Values": [
+    "1",
+    "2",
+    "3"
+    ]
+    }
+    ]
+    }
+    },
+"Sortings": [
+{
+"Name": "name",
+"SortMark": 1
+},
+{
+"Name": "age",
+"SortMark": 0
+},
+{
+"Name": "age",
+"SortMark": 0
+}
+]
+}
+```
+
+## 生成的SQL语句
+```
+SELECT
+    [Extent1].[Id] AS [Id],
+    [Extent1].[Name] AS [Name],
+    [Extent1].[Age] AS [Age],
+    [Extent1].[Age2] AS [Age2]
+    FROM [dbo].[Entities] AS [Extent1]
+    WHERE ((([Extent1].[Name] IS NOT NULL) AND ([Extent1].[Name] LIKE N'%a%')) OR (([Extent1].[Name] IS NOT NULL) AND ([Extent1].[Name] LIKE N'%b%'))) AND ([Extent1].[Age] = [Extent1].[Age2]) AND (N'nam2' = [Extent1].[Name]) AND ( NOT ((N'nam2' = [Extent1].[Name]) AND ([Extent1].[Name] IS NOT NULL))) AND ([Extent1].[Name] IS NOT NULL) AND ([Extent1].[Name] LIKE N'%nam2%') AND (([Extent1].[Name] IS NULL) OR ( NOT ([Extent1].[Name] LIKE N'%nam2%'))) AND ([Extent1].[Name] IN (N'1', N'2', N'3')) AND ([Extent1].[Name] IS NOT NULL) AND ( NOT (([Extent1].[Name] IN (N'1', N'2', N'3')) AND ([Extent1].[Name] IS NOT NULL))) AND ([Extent1].[Age] IN (1, 2, 3)) AND (([Extent1].[Age] IN (1, 4)) OR ([Extent1].[Age] IN (1, 4, 9999))) AND ([Extent1].[Age] IN (1, 4))
+    ORDER BY [Extent1].[Name] DESC, [Extent1].[Age] ASC
+```
